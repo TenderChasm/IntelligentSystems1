@@ -231,6 +231,8 @@ class Translator():
     #raw engine dictionary ouput is converted to human-like sentences depending on the user question and processor answer
     #don't forget to change user to you and e.t.c
 
+    # Hello world
+
     def __init__():
         pass
 
