@@ -1,0 +1,20 @@
+synonyms:
+  are: is
+  am: is
+  on: in
+  learn: study
+  class : subject
+  my: user
+  me: user
+  i: user
+  mine: user
+  his : someone
+  her : someone
+  population : people
+  place : location
+  classmate : groupmate
+concats:
+  - study with
+rules:
+  - has(Entity,_,carnivore,_,_) :- eat(Entity, _, meat, _, _)
+  - touch(user, _, grass, _, _)
