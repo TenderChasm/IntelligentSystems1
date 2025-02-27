@@ -24,13 +24,15 @@ class Lux():
         self.lexer = Lexer(self.data['synonyms'], self.data['concats'])
         self.parser = Parser()
         self.processor = Processor(self.data['rules'])
+        self.translator = Translator()
     
     def think(self, query):
         preprocessed = self.lexer.preprocess(query)
         sentence = lux.parser.parse(preprocessed)
         reply = lux.processor.process_query(sentence)
         #here reply should go to the translator
-        return reply
+        translatedreply = lux.translator.translate(sentence, reply)
+        return translatedreply
         
 
 class Lexer():
@@ -231,13 +233,18 @@ class Translator():
     #raw engine dictionary ouput is converted to human-like sentences depending on the user question and processor answer
     #don't forget to change user to you and e.t.c
 
-    # Hello world
+    def translate(self, sentence, reply):
+        if sentence.stype == SentenceType.Statement:
+            return reply
+        else:
+            # Extract values from each dictionary using map.
+            values = list(map(lambda d: d['Var'], reply))
 
-    def __init__():
-        pass
+            # Create the final string by iterating over values with their indices.
+            result = ''.join(f"{value}{', ' if i < len(values)-1 else '.'}" 
+                            for i, value in enumerate(values))
+            return sentence.subject +" "+ sentence.rule_name +" "+ result
 
-    def translate(reply):
-        pass 
 
 
 

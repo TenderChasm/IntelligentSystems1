@@ -18,3 +18,4 @@ concats:
 rules:
   - has(Entity,_,carnivore,_,_) :- eat(Entity, _, meat, _, _)
   - touch(user, _, grass, _, _)
+
