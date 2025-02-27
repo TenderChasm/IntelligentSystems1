@@ -6,7 +6,7 @@ from enum import Enum, auto
 from dataclasses import dataclass
 from dataclasses import asdict
 
-
+#zdarova
 class SentenceType(Enum):
     Statement =  auto()
     Question = auto()
