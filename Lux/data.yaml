@@ -27,6 +27,7 @@ concats:
   - intelligent systems
   - programming languages
   - programming fundamentals
+  - functional programming
 rules:
   - has(Entity,_,carnivore,_,_) :- eat(Entity, _, meat, _, _)
   - has(Entity,_,herbivore,_,_) :- eat(Entity, _, plants, _, _)
@@ -69,21 +70,21 @@ rules:
 
   - has(Entity,_,omnivore,_,_) :- has(Entity,_,carnivore,_,_), has(Entity,_,herbivore,_,_)
 
-  - study(Person, _, Subject, Article, Addition) :- attend(Person, _, _, in, Faculty), offer(Faculty, _, Subject, Article, Addition)
-  - study_with(Person, _, Other, _, _) :- attend(Person, _, _, in, Faculty), attend(Other, _, _, in, Faculty), neq(Person, Other)
-  - has(Person, _, programmer, _, _ ) :- attend(Person, _, _, in, bics)
-  - attend(inna, _, _, in, bics)
-  - attend(adelaide, _, _, in, bics)
-  - attend(andrey, _, _, in, bics)
-  - attend(vitaliy, _, _, in, bics)
-  - attend(marine, _, _, in, bmed)
-  - attend(house, _, _, in, bmed) 
+  - study(Person, _, Subject, Article, Addition) :- enrolled(Person, _, _, in, Faculty), offer(Faculty, _, Subject, Article, Addition)
+  - study_with(Person, _, Other, _, _) :- enrolled(Person, _, _, in, Faculty), enrolled(Other, _, _, in, Faculty), neq(Person, Other)
+  - has(Person, _, programmer, _, _ ) :- enrolled(Person, _, _, in, bics)
+  - enrolled(inna, _, _, in, bics)
+  - enrolled(adelaide, _, _, in, bics)
+  - enrolled(andrey, _, _, in, bics)
+  - enrolled(vitaliy, _, _, in, bics)
+  - enrolled(marine, _, _, in, bmed)
+  - enrolled(house, _, _, in, bmed) 
   - offer(bics, _, intelligent_systems, at, wednesday)
+  - offer(bics, _, functional_programming, at, wednesday)
   - offer(bics, _, programming_languages, at, friday)
   - offer(bics, _, programming_fundamentals, at, monday)
   - offer(bics, _, programming_fundamentals, at, tuesday)
   - offer(bics, _, intelligent_systems, in, 4160)
-  - offer(bics, _, intelligent_systems, in, 3380)
   - offer(bics, _, programming_languages, in, 4510)
   - offer(bics, _, programming_fundamentals, in, 4020)
   - offer(bics, _, programming_fundamentals, in, 3200)
