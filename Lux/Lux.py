@@ -101,12 +101,12 @@ class Parser():
         #matches "What Dog of user eat at night?"
         elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
             question, subject, belong, rule_name, addition_prefix, addition = match.groups()
-        #matches "What Dog eat at night?"
-        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
-            question, subject, rule_name, addition_prefix, addition = match.groups()
         #matches "What dog of user eat?"
         elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, belong, rule_name = match.groups()
+        #matches "What Dog eat at night?"
+        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
+            question, subject, rule_name, addition_prefix, addition = match.groups()
         #matches "What Dog eat?"
         elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name = match.groups()
@@ -114,12 +114,12 @@ class Parser():
         #matches "When Dog of user eat apples?"
         elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, belong, rule_name, value = match.groups()
-        #matches "When Dog eat the apples?"
-        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
-            question, subject, rule_name, value = match.groups()
         #matches "When dog of user eat?"
         elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, belong, rule_name = match.groups()
+        #matches "When Dog eat the apples?"
+        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
+            question, subject, rule_name, value = match.groups()
         #matches "When Dog eat?"
         elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name = match.groups()
@@ -127,24 +127,24 @@ class Parser():
         #matches "dog of user eat apples at night" or "dog of user eat apples at night?"
         elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, belong, rule_name, value, addition_prefix, addition, question = match.groups()
-        #matches "dog eat apples at night" or "dog eat apples at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
-            subject, rule_name, value, addition_prefix, addition, question = match.groups()
         #matches "Dog of user eat at night" or "Dog of user eat at night?"
         elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, belong, rule_name, addition_prefix, addition, question = match.groups()
+        #matches "dog eat apples at night" or "dog eat apples at night?"
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
+            subject, rule_name, value, addition_prefix, addition, question = match.groups()
         #matches "Dog eat at night" or "Dog eat at night?"
         elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, rule_name, addition_prefix, addition, question = match.groups()
         #matches "Dog of user eat apples" or "Dog of user eat apples?"
         elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, belong, rule_name, value, question = match.groups()
-        #matches "Dog eat apples" or "Dog eat apples?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
-            subject, rule_name, value, question = match.groups()
         #matches "Dog of user eat" or "Dog of user eat?"
         elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, belong, rule_name, question = match.groups()
+        #matches "Dog eat apples" or "Dog eat apples?"
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
+            subject, rule_name, value, question = match.groups()
         #matches "Dog eat" or "Dog eat?"
         elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, rule_name, question = match.groups()
@@ -194,6 +194,7 @@ class Processor():
     def _question(self, question: str):
         try:
             result = self.engine.query(pl.Expr(question))
+            self.engine._cache = {}
         except TypeError:
             # If pytholog fails (e.g., due to an unexpected None), return an empty list.
             return []
@@ -291,8 +292,6 @@ class Translator():
         elif sentence.stype == SentenceType.WhichQuestion:
             # e.g., "Dog of sasha, misha." or negative: "No dog eats uranium."
             base = subject
-            if belong:
-                base += f" of {belong}"
             if negative:
                 if value:
                     sentence_str = f"No {base} {rule}s {value}".strip()
@@ -302,14 +301,13 @@ class Translator():
                 sentence_str = f"{base} of {reply_values}".strip()
         elif sentence.stype == SentenceType.WhenQuestion:
             # e.g., "Dog eats uranium at night." or negative: "No dog eats uranium."
-            varp = ""
+            varp = "at"
             var = ""
             if reply and isinstance(reply[0], dict):
-                varp = reply[0].get("VarP", "")
                 var = reply[0].get("Var", "")
-            base = f"{subject} {rule} {value}".strip()
             if belong:
-                base += f" of {belong}"
+                subject = f"{subject} of {belong}"
+            base = f"{subject} {rule} {value}".strip()
             if not negative:
                 base += f" {varp} {var}"
             elif add_prefix and negative:
@@ -317,14 +315,13 @@ class Translator():
             sentence_str = base
         elif sentence.stype == SentenceType.WhereQuestion:
             # e.g., "Dog eats urandoium at home." or negative: "No dog eats uranium."
-            varp = ""
+            varp = "in"
             var = ""
             if reply and isinstance(reply[0], dict):
-                varp = reply[0].get("VarP", "")
                 var = reply[0].get("Var", "")
-            base = f"{subject} {rule} {value}".strip()
             if belong:
-                base += f" of {belong}"
+                subject = f"{subject} of {belong}"
+            base = f"{subject} {rule} {value}".strip()
             if not negative:
                 base += f" {varp} {var}"
             elif add_prefix and negative:
