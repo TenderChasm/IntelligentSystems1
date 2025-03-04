@@ -5,7 +5,8 @@ import pytholog as pl
 from enum import Enum, auto
 from dataclasses import dataclass
 from dataclasses import asdict
-
+import customtkinter as ctk
+from tkinter import scrolledtext
 
 class SentenceType(Enum):
     Statement =  auto()
@@ -351,11 +352,133 @@ class Translator():
 
 
 #testing zone 	▓▒░(°◡°)░▒▓
-if __name__ == '__main__': 
+if __name__ == '__main__':
     lux = Lux(os.path.dirname(__file__) + '/data.yaml')
     print('LUX INITIALIZED')
-    print('----DIALOGUE START----')
-    while True:
-        query = input()
+
+    # Initialize the main window with a dark theme
+    ctk.set_appearance_mode("Dark")  # Dark mode
+    ctk.set_default_color_theme("dark-blue")
+
+    app = ctk.CTk()
+    app.title("LUX Chatbot")
+    app.geometry("500x600")
+    app.resizable(False, False)
+
+    # Configure grid layout
+    app.grid_rowconfigure(0, weight=1)
+    app.grid_columnconfigure(0, weight=1)
+
+    # Conversation Frame
+    conversation_frame = ctk.CTkFrame(app, fg_color="#1e1e1e")  # Sleek dark gray
+    conversation_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+    # Scrolled Text Widget for Chat
+    conversation = scrolledtext.ScrolledText(
+        conversation_frame,
+        wrap="word",
+        state='disabled',
+        font=("Arial", 13),
+        bg="#1e1e1e",  # Same as frame for seamless look
+        fg="white",
+        bd=0,
+        highlightthickness=0,
+        padx=10,
+        pady=10
+    )
+    conversation.pack(padx=10, pady=10, fill="both", expand=True)
+
+    # Input Field & Button Frame
+    input_frame = ctk.CTkFrame(app, fg_color="#1e1e1e")  
+    input_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="ew")
+
+    # Modern Input Field
+    user_input = ctk.CTkEntry(
+        input_frame,
+        placeholder_text="Type a message...",
+        font=("Arial", 13),
+        fg_color="#2a2a2a",
+        text_color="white",
+        border_width=0,
+        corner_radius=25,
+        height=45
+    )
+    user_input.pack(side="left", padx=10, pady=10, fill="x", expand=True)
+
+    # Modern Send Button
+    send_button = ctk.CTkButton(
+        input_frame,
+        text="➤",
+        font=("Arial", 16, "bold"),
+        fg_color="#0078D4",
+        hover_color="#0066B2",
+        text_color="white",
+        corner_radius=25,
+        width=50,
+        height=45
+    )
+    send_button.pack(side="right", padx=10, pady=10)
+
+    # Function to Send Messages
+    def send_message():
+        query = user_input.get().strip()
+        if not query:
+            return
+
+        conversation.config(state='normal')
+
+        # User Message
+        conversation.insert("end", f"\n\n", "spacing")  # Adds spacing
+        conversation.insert("end", f"You:\n", "user_label")
+        conversation.insert("end", f"{query}\n", "user_message")
+
+        # Chatbot Response
         reply = lux.think(query)
-        print('LUX: - ',reply)
+        conversation.insert("end", f"\n\n", "spacing")  # Adds spacing
+        conversation.insert("end", f"LUX:\n", "bot_label")
+        conversation.insert("end", f"{reply}\n", "bot_message")
+
+        conversation.config(state='disabled')
+        user_input.delete(0, "end")
+        conversation.yview("end")  # Scroll to the bottom
+
+    # Bind "Enter" Key & Button Click to Send Message
+    app.bind('<Return>', lambda event: send_message())
+    send_button.configure(command=send_message)
+
+    # Styling Chat Bubbles
+    conversation.tag_configure("user_label", foreground="#A0A0A0", font=("Arial", 11, "italic"), justify="right")
+    conversation.tag_configure("bot_label", foreground="#A0A0A0", font=("Arial", 11, "italic"))
+
+    conversation.tag_configure(
+        "user_message",
+        foreground="white",
+        lmargin1=100,
+        lmargin2=100,
+        rmargin=10,
+        spacing3=10,
+        wrap="word",
+        justify="right",
+        font=("Consolas", 19),
+        borderwidth=0,
+        relief="flat"
+    )
+
+    conversation.tag_configure(
+        "bot_message",
+        foreground="white",
+        lmargin1=10,
+        lmargin2=10,
+        rmargin=100,
+        spacing3=10,
+        wrap="word",
+        justify="left",
+        font=("Consolas", 19),
+        borderwidth=0,
+        relief="flat"
+    )
+
+    conversation.tag_configure("spacing", spacing1=5, spacing3=5)
+
+    # Start the Main Loop
+    app.mainloop()
