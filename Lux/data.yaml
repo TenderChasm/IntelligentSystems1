@@ -2,7 +2,7 @@ synonyms:
   is: is
   are: is
   am: is
-  on: in
+  'on': at
   from: of
   learn: study
   class: subject
@@ -78,7 +78,6 @@ rules:
   - attend(vitaliy, _, _, in, bics)
   - attend(marine, _, _, in, bmed)
   - attend(house, _, _, in, bmed) 
-  - attend()
   - offer(bics, _, intelligent_systems, at, wednesday)
   - offer(bics, _, programming_languages, at, friday)
   - offer(bics, _, programming_fundamentals, at, monday)
