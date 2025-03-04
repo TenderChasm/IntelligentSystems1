@@ -54,7 +54,7 @@ class Lexer():
                  processed_arr.append(self.synonyms[token])
              elif token.endswith('es') and token[:-2] in self.synonyms:
                  processed_arr.append(pluralize(self.synonyms[token[:-2]]))
-             elif token.endswith('s') and token[:-1] in self.synonyms:
+             elif token.endswith('s') and token[:-1] in self.synonyms and token != 'is':
                  processed_arr.append(pluralize(self.synonyms[token[:-1]]))
              else:
                  processed_arr.append(token)
@@ -73,80 +73,80 @@ class Parser():
         question = subject = belong = rule_name = value = addition_prefix = addition = None
 
         #matches "Which Dog eat apples at night?"
-        if match := re.search(r'(?:.* |^)(which) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)', query):
+        if match := re.search(r'(?:.* |^)(which) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name, value, addition_prefix, addition = match.groups()
         #matches "Which Dog eat at night?"
-        elif match := re.search(r'(?:.* |^)(which) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(which) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name, addition_prefix, addition = match.groups()
         #matches "Which Dog eat apples?"
-        elif match := re.search(r'(?:.* |^)(which) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(which) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name, value = match.groups()
         #matches "Which Dog eat?"
-        elif match := re.search(r'(?:.* |^)(which) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(which) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name = match.groups()
 
         #matches "Who eat at night?"
-        elif match := re.search(r'(?:.* |^)(who) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(who) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
             question, rule_name, addition_prefix, addition = match.groups()
         #matches "Who eat apples at night?"
-        elif match := re.search(r'(?:.* |^)(who) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(who) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
             question, rule_name, value, addition_prefix, addition = match.groups()
         #matches "Who eat apples?"
-        elif match := re.search(r'(?:.* |^)(who) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(who) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, rule_name, value = match.groups()
         #matches "Who eat?"
-        elif match := re.search(r'(?:.* |^)(who) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(who) ([a-zA-Z0-9_]+)', query):
             question, rule_name = match.groups()
 
         #matches "What Dog of user eat at night?"
-        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9]+) of ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
             question, subject, belong, rule_name, addition_prefix, addition = match.groups()
         #matches "What Dog eat at night?"
-        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name, addition_prefix, addition = match.groups()
         #matches "What dog of user eat?"
-        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9]+) of ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, belong, rule_name = match.groups()
         #matches "What Dog eat?"
-        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(what) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name = match.groups()
 
         #matches "When Dog of user eat apples?"
-        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9]+) of ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, belong, rule_name, value = match.groups()
         #matches "When Dog eat the apples?"
-        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name, value = match.groups()
         #matches "When dog of user eat?"
-        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9]+) of ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, belong, rule_name = match.groups()
         #matches "When Dog eat?"
-        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)', query):
+        elif match := re.search(r'(?:.* |^)(when|where) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)', query):
             question, subject, rule_name = match.groups()
 
         #matches "dog of user eat apples at night" or "dog of user eat apples at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9]+) of ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, belong, rule_name, value, addition_prefix, addition, question = match.groups()
         #matches "dog eat apples at night" or "dog eat apples at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, rule_name, value, addition_prefix, addition, question = match.groups()
         #matches "Dog of user eat at night" or "Dog of user eat at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9]+) of ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, belong, rule_name, addition_prefix, addition, question = match.groups()
         #matches "Dog eat at night" or "Dog eat at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9]+) ([a-zA-Z0-9]+) (in|at) ([a-zA-Z0-9]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, rule_name, addition_prefix, addition, question = match.groups()
         #matches "Dog of user eat apples" or "Dog of user eat apples?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9]+) of ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, belong, rule_name, value, question = match.groups()
         #matches "Dog eat apples" or "Dog eat apples?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, rule_name, value, question = match.groups()
         #matches "Dog of user eat" or "Dog of user eat?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9]+) of ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, belong, rule_name, question = match.groups()
         #matches "Dog eat" or "Dog eat?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9]+) ([a-zA-Z0-9]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
             subject, rule_name, question = match.groups()
         
         rule_name = 'has' if rule_name == 'is' else rule_name
@@ -224,9 +224,11 @@ class Processor():
                 case SentenceType.WhenQuestion:
                     sen.addition_prefix = 'VarP'
                     sen.addition = 'Var'
+                    sen.addition_prefix = 'at'
                 case SentenceType.WhereQuestion:
                     sen.addition_prefix = 'VarP'
                     sen.addition = 'Var'
+                    sen.addition_prefix = 'in'
                 case SentenceType.WhoQuestion:
                     sen.subject = 'Var'
             sen = self._convert_none_to_any_variable(sen) 
@@ -338,8 +340,6 @@ class Translator():
         if sentence_str:
             sentence_str = sentence_str[0].upper() + sentence_str[1:] + "."
         return sentence_str
-
-
 
 
 #testing zone 	▓▒░(°◡°)░▒▓
