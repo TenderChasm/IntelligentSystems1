@@ -224,11 +224,11 @@ class Processor():
                 case SentenceType.WhenQuestion:
                     sen.addition_prefix = 'VarP'
                     sen.addition = 'Var'
-                    sen.addition_prefix = 'at'
+                    #sen.addition_prefix = 'at'
                 case SentenceType.WhereQuestion:
                     sen.addition_prefix = 'VarP'
                     sen.addition = 'Var'
-                    sen.addition_prefix = 'in'
+                    #sen.addition_prefix = 'in'
                 case SentenceType.WhoQuestion:
                     sen.subject = 'Var'
             sen = self._convert_none_to_any_variable(sen) 
