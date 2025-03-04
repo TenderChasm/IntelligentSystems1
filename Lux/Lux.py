@@ -222,13 +222,13 @@ class Processor():
                 case SentenceType.WhichQuestion:
                     sen.belong = 'Var'
                 case SentenceType.WhenQuestion:
-                    sen.addition_prefix = 'VarP'
+                    #sen.addition_prefix = 'VarP'
                     sen.addition = 'Var'
-                    #sen.addition_prefix = 'at'
+                    sen.addition_prefix = 'at'
                 case SentenceType.WhereQuestion:
-                    sen.addition_prefix = 'VarP'
+                    #sen.addition_prefix = 'VarP'
                     sen.addition = 'Var'
-                    #sen.addition_prefix = 'in'
+                    sen.addition_prefix = 'in'
                 case SentenceType.WhoQuestion:
                     sen.subject = 'Var'
             sen = self._convert_none_to_any_variable(sen) 
@@ -253,7 +253,13 @@ class Translator():
         value = self.safe(sentence.value)
         add_prefix = self.safe(sentence.addition_prefix)
 
-
+        if subject == 'user':
+            subject = 'you'
+        if belong == 'user':
+            belong = 'yours'
+        if value == 'user':
+            value = 'you'
+        
         if sentence.stype == SentenceType.Statement:
             return reply
         
@@ -336,9 +342,14 @@ class Translator():
         else:
             sentence_str = " ".join([reply_values]).strip()
         
-        # Capitalize the first letter and add a period.
+        # Capitalize the first letter and add a period
         if sentence_str:
             sentence_str = sentence_str[0].upper() + sentence_str[1:] + "."
+        
+        #replace underscores from compound idioms
+        if sentence_str:
+            sentence_str = sentence_str.replace('_',' ')
+
         return sentence_str
 
 
