@@ -1,21 +1,60 @@
 synonyms:
+  is: is
   are: is
   am: is
   on: in
   learn: study
-  class : subject
+  class: subject
   my: user
   me: user
   i: user
   mine: user
-  his : someone
-  her : someone
-  population : people
-  place : location
-  classmate : groupmate
+  his: someone
+  her: someone
+  population: people
+  place: location
+  classmate: groupmate
 concats:
   - study with
 rules:
   - has(Entity,_,carnivore,_,_) :- eat(Entity, _, meat, _, _)
+  - has(Entity,_,herbivore,_,_) :- eat(Entity, _, plants, _, _)
+
+
   - touch(user, _, grass, _, _)
+
+  - has(tiger, _, carnivore, _, _)
+  - has(tiger, _, stripes, _, _)
+  - has(tiger, _, yellow, _, _)
+  - has(Entity,_,tiger,_,_) :- has(Entity,_,carnivore,_,_), has(Entity,_,yellow,_,_), has(Entity,_,stripes,_,_)
+
+  - has(elephant, _, herbivore, _, _)
+  - has(elephant, _, grey, _, _)
+  - has(elephant, _, trunk, _, _)
+  - has(Entity,_,elephant,_,_) :- has(Entity,_,herbivore,_,_), has(Entity,_,grey,_,_), has(Entity,_,trunk,_,_)
+
+  - has(pig, _, carnivore, _, _)
+  - has(pig, _, herbivore, _, _)
+  - has(pig, _, pink, _, _)
+  - has(pig, _, snout, _, _)
+  - has(Entity,_,pig,_,_) :- has(Entity,_,herbivore,_,_), has(Entity,_,pink,_,_), has(Entity,_,snout,_,_)
+
+  - has(lion, _, carnivore, _, _)
+  - has(lion, _, mane, _, _)
+  - has(lion, _, yellow, _, _)
+  - has(Entity,_,lion,_,_) :- has(Entity,_,carnivore,_,_), has(Entity,_,yellow,_,_), has(Entity,_,mane,_,_)
+
+  - has(bear, _, carnivore, _, _)
+  - has(bear, _, herbivore, _, _)
+  - has(bear, _, brown, _, _)
+  - has(bear, _, claws, _, _)
+  - has(Entity,_,bear,_,_) :- has(Entity,_,omnivore,_,_), has(Entity,_,brown,_,_), has(Entity,_,claws,_,_)
+
+  - has(deer, _, herbivore, _, _)
+  - has(deer, _, antlers, _, _)
+  - has(deer, _, brown, _, _)
+  - has(Entity,_,deer,_,_) :- has(Entity,_,herbivore,_,_), has(Entity,_,brown,_,_), has(Entity,_,antlers,_,_)
+
+
+  - has(Entity,_,omnivore,_,_) :- has(Entity,_,carnivore,_,_), has(Entity,_,herbivore,_,_)
 
