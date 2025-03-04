@@ -6,7 +6,7 @@ from enum import Enum, auto
 from dataclasses import dataclass
 from dataclasses import asdict
 
-#zdarova
+
 class SentenceType(Enum):
     Statement =  auto()
     Question = auto()
@@ -25,14 +25,16 @@ class Lux():
         self.parser = Parser()
         self.processor = Processor(self.data['rules'])
         self.translator = Translator()
+
     
     def think(self, query):
         preprocessed = self.lexer.preprocess(query)
         sentence = lux.parser.parse(preprocessed)
+        # print (sentence)
         reply = lux.processor.process_query(sentence)
-        #here reply should go to the translator
-        translatedreply = lux.translator.translate(sentence, reply)
-        return translatedreply
+
+        translated = lux.translator.translate(sentence, reply)
+        return translated
         
 
 class Lexer():
@@ -190,7 +192,13 @@ class Processor():
         self.engine._cache = {}
 
     def _question(self, question: str):
-        return self.engine.query(pl.Expr(question))
+        try:
+            result = self.engine.query(pl.Expr(question))
+        except TypeError:
+            # If pytholog fails (e.g., due to an unexpected None), return an empty list.
+            return []
+        return result if result is not None else []
+
     
     def _convert_none_to_any_variable(self, sen : Sentence):
         field_dict = asdict(sen)
@@ -214,8 +222,10 @@ class Processor():
                 case SentenceType.WhichQuestion:
                     sen.belong = 'Var'
                 case SentenceType.WhenQuestion:
+                    sen.addition_prefix = 'VarP'
                     sen.addition = 'Var'
                 case SentenceType.WhereQuestion:
+                    sen.addition_prefix = 'VarP'
                     sen.addition = 'Var'
                 case SentenceType.WhoQuestion:
                     sen.subject = 'Var'
@@ -227,31 +237,114 @@ class Processor():
 
 
 class Translator():
+  
 
-    #TODO 
-    #This class should convert output of a processor to the human sentences
-    #raw engine dictionary ouput is converted to human-like sentences depending on the user question and processor answer
-    #don't forget to change user to you and e.t.c
+    def safe(self, val):
+        return val if val is not None else ""
+        
 
     def translate(self, sentence, reply):
+
+        subject = self.safe(sentence.subject)
+        belong = self.safe(sentence.belong)
+        rule = self.safe(sentence.rule_name)
+        value = self.safe(sentence.value)
+        add_prefix = self.safe(sentence.addition_prefix)
+
+
         if sentence.stype == SentenceType.Statement:
             return reply
+        
+        if not reply:
+            return "I could not find an answer."
+        
+        extracted_replies = []
+        for item in reply:
+            if isinstance(item, dict):
+                extracted_replies.append(item.get("Var", ""))
+            elif isinstance(item, str):
+                extracted_replies.append(item)
+            else:
+                extracted_replies.append(str(item))
+        reply_values = ", ".join(ans for ans in extracted_replies if ans)
+
+        negative = reply_values.lower() in {"no", "none", ""}
+        
+        sentence_str = ""
+        if sentence.stype == SentenceType.WhatQuestion:
+            # e.g., "Dog of Sasha eats uranium." or negative: "No dog eats uranium."
+            base = f"{subject}"
+            if belong:
+                base += f" of {belong}"
+            if negative:
+                sentence_str = f"I don't know"
+            else:
+                sentence_str = f"{base} {rule} {reply_values}".strip()
+        elif sentence.stype == SentenceType.WhichQuestion:
+            # e.g., "Dog of sasha, misha." or negative: "No dog eats uranium."
+            base = subject
+            if belong:
+                base += f" of {belong}"
+            if negative:
+                if value:
+                    sentence_str = f"No {base} {rule}s {value}".strip()
+                else:
+                    sentence_str = f"No {base} {rule}s.".strip()
+            else:
+                sentence_str = f"{base} of {reply_values}".strip()
+        elif sentence.stype == SentenceType.WhenQuestion:
+            # e.g., "Dog eats uranium at night." or negative: "No dog eats uranium."
+            varp = ""
+            var = ""
+            if reply and isinstance(reply[0], dict):
+                varp = reply[0].get("VarP", "")
+                var = reply[0].get("Var", "")
+            base = f"{subject} {rule} {value}".strip()
+            if belong:
+                base += f" of {belong}"
+            if not negative:
+                base += f" {varp} {var}"
+            elif add_prefix and negative:
+                base = f"No {subject} {rule} {value}".strip()
+            sentence_str = base
+        elif sentence.stype == SentenceType.WhereQuestion:
+            # e.g., "Dog eats urandoium at home." or negative: "No dog eats uranium."
+            varp = ""
+            var = ""
+            if reply and isinstance(reply[0], dict):
+                varp = reply[0].get("VarP", "")
+                var = reply[0].get("Var", "")
+            base = f"{subject} {rule} {value}".strip()
+            if belong:
+                base += f" of {belong}"
+            if not negative:
+                base += f" {varp} {var}"
+            elif add_prefix and negative:
+                base = f"No {subject} {rule} {value}".strip()
+            sentence_str = base
+        elif sentence.stype == SentenceType.WhoQuestion:
+            # e.g., "Dog eats uranium." or negative: "No dog eat uranium."
+            if negative:
+                if value:
+                    sentence_str = f"No {subject} {rule} {value}".strip()
+                else:
+                    sentence_str = f"No {subject} {rule}.".strip()
+            else:
+                sentence_str = f"{reply_values} {rule} {value}".strip()
         else:
-            # Extract values from each dictionary using map.
-            values = list(map(lambda d: d['Var'], reply))
-
-            # Create the final string by iterating over values with their indices.
-            result = ''.join(f"{value}{', ' if i < len(values)-1 else '.'}" 
-                            for i, value in enumerate(values))
-            return sentence.subject +" "+ sentence.rule_name +" "+ result
-
+            sentence_str = " ".join([reply_values]).strip()
+        
+        # Capitalize the first letter and add a period.
+        if sentence_str:
+            sentence_str = sentence_str[0].upper() + sentence_str[1:] + "."
+        return sentence_str
 
 
 
 
 #testing zone 	▓▒░(°◡°)░▒▓
 if __name__ == '__main__': 
-    lux = Lux(os.path.dirname(__file__) + '\data.yaml')
+    lux = Lux(os.path.dirname(__file__) + '/data.yaml')
     print('LUX INITIALIZED')
     print('----DIALOGUE START----')
     while True:
