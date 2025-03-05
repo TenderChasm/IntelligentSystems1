@@ -33,11 +33,14 @@ class Lux():
     
     def think(self, query):
         preprocessed = self.lexer.preprocess(query)
+        if preprocessed == "hi" or preprocessed == "hello":
+            return "Hello! How can I help you?"
         sentence = lux.parser.parse(preprocessed)
         # print (sentence)
         reply = lux.processor.process_query(sentence)
-
-        translated = lux.translator.translate(sentence, reply)
+        if "hello" in preprocessed or "hi" in preprocessed:
+            translated = "Hello! "
+        translated += lux.translator.translate(sentence, reply)
         return translated
         
 
