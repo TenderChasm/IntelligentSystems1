@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from dataclasses import asdict
 import customtkinter as ctk
 from tkinter import scrolledtext
+import time
+import threading
+import tkinter as tk
 
 class SentenceType(Enum):
     Statement =  auto()
@@ -370,33 +373,38 @@ if __name__ == '__main__':
     app.grid_columnconfigure(0, weight=1)
 
     # Conversation Frame
-    conversation_frame = ctk.CTkFrame(app, fg_color="#1e1e1e")  # Sleek dark gray
+    conversation_frame = ctk.CTkFrame(app, fg_color="#1e1e1e")
     conversation_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
+    # Custom Scrollbar
+    scrollbar = ctk.CTkScrollbar(conversation_frame, fg_color="#2a2a2a")
+    scrollbar.pack(side="right", fill="y")
+
     # Scrolled Text Widget for Chat
-    conversation = scrolledtext.ScrolledText(
+    conversation = tk.Text(
         conversation_frame,
         wrap="word",
         state='disabled',
-        font=("Arial", 13),
-        bg="#1e1e1e",  # Same as frame for seamless look
+        font=("Arial", 20),
+        bg="#1e1e1e",
         fg="white",
         bd=0,
         highlightthickness=0,
         padx=10,
-        pady=10
+        pady=10,
+        yscrollcommand=scrollbar.set
     )
     conversation.pack(padx=10, pady=10, fill="both", expand=True)
+    scrollbar.configure(command=conversation.yview)
 
     # Input Field & Button Frame
     input_frame = ctk.CTkFrame(app, fg_color="#1e1e1e")  
     input_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="ew")
 
-    # Modern Input Field
     user_input = ctk.CTkEntry(
         input_frame,
         placeholder_text="Type a message...",
-        font=("Arial", 13),
+        font=("Consolas", 13),
         fg_color="#2a2a2a",
         text_color="white",
         border_width=0,
@@ -408,16 +416,35 @@ if __name__ == '__main__':
     # Modern Send Button
     send_button = ctk.CTkButton(
         input_frame,
-        text="➤",
-        font=("Arial", 16, "bold"),
-        fg_color="#0078D4",
-        hover_color="#0066B2",
+        text="Send",
+        font=("Consolas", 16),
+        fg_color="#C983DD",
+        hover_color="#A66DB6",
         text_color="white",
         corner_radius=25,
         width=50,
         height=45
     )
     send_button.pack(side="right", padx=10, pady=10)
+
+    # Function to Print Bot's Message Letter by Letter
+    def type_response(reply):
+        conversation.config(state='normal')
+        conversation.insert("end", "\n\n", "spacing")
+        conversation.insert("end", "LUX:\n", "bot_label")
+        conversation.config(state='disabled')
+
+        def type_effect():
+            conversation.config(state='normal')
+            for letter in reply:
+                conversation.insert("end", letter, "bot_message")
+                conversation.yview("end")
+                time.sleep(0.03)  # Adjust typing speed here
+                conversation.update()
+            conversation.insert("end", "\n", "bot_message")
+            conversation.config(state='disabled')
+
+        threading.Thread(target=type_effect, daemon=True).start()
 
     # Function to Send Messages
     def send_message():
@@ -426,21 +453,16 @@ if __name__ == '__main__':
             return
 
         conversation.config(state='normal')
-
-        # User Message
-        conversation.insert("end", f"\n\n", "spacing")  # Adds spacing
-        conversation.insert("end", f"You:\n", "user_label")
+        conversation.insert("end", "\n\n", "spacing")
+        conversation.insert("end", "You:\n", "user_label")
         conversation.insert("end", f"{query}\n", "user_message")
+        conversation.config(state='disabled')
+        user_input.delete(0, "end")
+        conversation.yview("end")
 
         # Chatbot Response
         reply = lux.think(query)
-        conversation.insert("end", f"\n\n", "spacing")  # Adds spacing
-        conversation.insert("end", f"LUX:\n", "bot_label")
-        conversation.insert("end", f"{reply}\n", "bot_message")
-
-        conversation.config(state='disabled')
-        user_input.delete(0, "end")
-        conversation.yview("end")  # Scroll to the bottom
+        type_response(reply)
 
     # Bind "Enter" Key & Button Click to Send Message
     app.bind('<Return>', lambda event: send_message())

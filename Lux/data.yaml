@@ -30,6 +30,8 @@ concats:
   - functional programming
 rules:
   - has(Entity,_,carnivore,_,_) :- eat(Entity, _, meat, _, _)
+  - has(Entity,_,meat,_,_) :- eat(Entity, _, carnivore, _, _)
+
   - has(Entity,_,herbivore,_,_) :- eat(Entity, _, plants, _, _)
 
 
