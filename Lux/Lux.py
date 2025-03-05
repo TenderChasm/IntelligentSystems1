@@ -48,6 +48,7 @@ class Lexer():
         self.concats = concats
 
     def preprocess(self, query : str):
+        query = query.replace('?',' ?').replace('!','')
         query_arr = query.lower().split()
 
         pluralize = lambda word : word + 'es' if word.endswith(('s','x','z','ch','sh','ss')) else word + 's'
@@ -56,6 +57,8 @@ class Lexer():
         for token in query_arr:
              if token in self.synonyms:
                  processed_arr.append(self.synonyms[token])
+             elif token in {"a", "an", "the"}:  # Пропускаємо артиклі
+                 continue
              elif token.endswith('es') and token[:-2] in self.synonyms:
                  processed_arr.append(pluralize(self.synonyms[token[:-2]]))
              elif token.endswith('s') and token[:-1] in self.synonyms and token != 'is':
@@ -129,28 +132,28 @@ class Parser():
             question, subject, rule_name = match.groups()
 
         #matches "dog of user eat apples at night" or "dog of user eat apples at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+) ?(\?)?', query):
             subject, belong, rule_name, value, addition_prefix, addition, question = match.groups()
         #matches "Dog of user eat at night" or "Dog of user eat at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+) ?(\?)?', query):
             subject, belong, rule_name, addition_prefix, addition, question = match.groups()
         #matches "dog eat apples at night" or "dog eat apples at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+) ?(\?)?', query):
             subject, rule_name, value, addition_prefix, addition, question = match.groups()
         #matches "Dog eat at night" or "Dog eat at night?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) (in|at) ([a-zA-Z0-9_]+) ?(\?)?', query):
             subject, rule_name, addition_prefix, addition, question = match.groups()
         #matches "Dog of user eat apples" or "Dog of user eat apples?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ?(\?)?', query):
             subject, belong, rule_name, value, question = match.groups()
         #matches "Dog of user eat" or "Dog of user eat?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) of ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ?(\?)?', query):
             subject, belong, rule_name, question = match.groups()
         #matches "Dog eat apples" or "Dog eat apples?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ?(\?)?', query):
             subject, rule_name, value, question = match.groups()
         #matches "Dog eat" or "Dog eat?"
-        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+)(\?)?', query):
+        elif match := re.search(r'(?:.* |^)([a-zA-Z0-9_]+) ([a-zA-Z0-9_]+) ?(\?)?', query):
             subject, rule_name, question = match.groups()
         
         rule_name = 'has' if rule_name == 'is' else rule_name
