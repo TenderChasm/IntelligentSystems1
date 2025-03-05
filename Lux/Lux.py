@@ -38,7 +38,8 @@ class Lux():
         sentence = lux.parser.parse(preprocessed)
         # print (sentence)
         reply = lux.processor.process_query(sentence)
-        if "hello" in preprocessed or "hi" in preprocessed:
+        translated = ''
+        if "hello" in preprocessed:
             translated = "Hello! "
         translated += lux.translator.translate(sentence, reply)
         return translated
